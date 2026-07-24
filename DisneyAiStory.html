@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MagicBoard AI - Disney Animation Storyboard Generator</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        disney: ['Fredoka', 'sans-serif']
+                    },
+                    colors: {
+                        magic: {
+                            50: '#f0f4ff',
+                            100: '#e0e9fe',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#1e1b4b',
+                            gold: '#fbbf24',
+                            accent: '#ec4899'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        .magic-gradient-text {
+            background: linear-gradient(135deg, #a855f7, #6366f1, #ec4899, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glass-card-hover {
+            transition: all 0.3s ease;
+        }
+        .glass-card-hover:hover {
+            border-color: rgba(99, 102, 241, 0.5);
+            box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.3);
+            transform: translateY(-2px);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #6366f1;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-sans bg-slate-950 text-slate-100">
+
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                    <i class="fa-solid font-disney text-xl text-white">✨</i>
+                </div>
+                <div>
+                    <h1 class="font-disney text-xl font-bold tracking-wide magic-gradient-text">Disney MagicBoard AI</h1>
+                    <p class="text-xs text-slate-400">High-RPM Shorts & Reels Storyboard Prompt Generator</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3 text-xs">
+                <span class="px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 font-medium">
+                    <i class="fa-solid fa-clock mr-1"></i> 60 Seconds (6x10s)
+                </span>
+                <span class="px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/30 text-pink-300 font-medium">
+                    <i class="fa-solid fa-mobile-screen mr-1"></i> Aspect 9:16
+                </span>
+                <span class="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 font-medium hidden sm:inline-block">
+                    <i class="fa-solid fa-sliders mr-1"></i> Max Detail Prompts
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+        <section class="lg:col-span-4 space-y-6">
+            <div class="glass-card rounded-2xl p-6 space-y-5">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <h2 class="text-lg font-bold flex items-center text-white">
+                        <i class="fa-solid fa-wand-magic-sparkles text-indigo-400 mr-2"></i> Konfigurasi Cerita
+                    </h2>
+                    <span class="text-xs bg-amber-500/20 text-amber-300 px-2.5 py-0.5 rounded-full font-semibold border border-amber-500/30">
+                        🔥 High RPM Strategy
+                    </span>
+                </div>
+
+                <!-- High RPM Niche Template Selection -->
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
+                        Pilih Formula Viral / High-RPM Niche
+                    </label>
+                    <select id="nicheSelect" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
+                        <option value="heartwarming_sacrifice">🥹 Heartwarming Sacrifice (Sedih & Memotivasi)</option>
+                        <option value="unexpected_hero">bar Smallest Creature Hero (Kisah Pahlawan Tak Terduga)</option>
+                        <option value="secret_world">✨ Secret World Beneath Us (Dunia Rahasia Benda/Hewan)</option>
+                        <option value="moral_paradox">⚖️ Moral Paradox & Karma (Plot Twist Karma Setimpal)</option>
+                        <option value="unlikely_friendship">🦊 Unlikely Friendship (Dua Musuh Jadi Sahabat)</option>
+                        <option value="custom">✏️ Custom Idea (Gunakan Ide Sendiri)</option>
+                    </select>
+                </div>
+
+                <!-- Emotional Hook / Tone -->
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
+                        Emotional Hook & Tone
+                    </label>
+                    <div class="grid grid-cols-2 gap-2" id="toneContainer">
+                        <button type="button" data-tone="emotional_twist" class="tone-btn active-tone px-3 py-2 rounded-xl text-xs font-medium border border-indigo-500 bg-indigo-600/20 text-indigo-200 text-left flex items-center justify-between">
+                            <span>🥹 Tearjerker / Twist</span>
+                            <i class="fa-solid fa-check text-xs"></i>
+                        </button>
+                        <button type="button" data-tone="wholesome_cozy" class="tone-btn px-3 py-2 rounded-xl text-xs font-medium border border-slate-700 bg-slate-900 text-slate-400 text-left flex items-center justify-between">
+                            <span>✨ Wholesome & Cozy</span>
+                            <i class="fa-solid fa-check text-xs opacity-0"></i>
+                        </button>
+                        <button type="button" data-tone="action_suspense" class="tone-btn px-3 py-2 rounded-xl text-xs font-medium border border-slate-700 bg-slate-900 text-slate-400 text-left flex items-center justify-between">
+                            <span>⚡ High Suspense</span>
+                            <i class="fa-solid fa-check text-xs opacity-0"></i>
+                        </button>
+                        <button type="button" data-tone="funny_relatable" class="tone-btn px-3 py-2 rounded-xl text-xs font-medium border border-slate-700 bg-slate-900 text-slate-400 text-left flex items-center justify-between">
+                            <span>😂 Funny & Mind-bending</span>
+                            <i class="fa-solid fa-check text-xs opacity-0"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Main Character Profile -->
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                            Karakter Utama (Disney Style)
+                        </label>
+                        <button type="button" onclick="randomizeCharacter()" class="text-[11px] text-indigo-300 hover:text-white font-medium flex items-center space-x-1 bg-indigo-500/20 hover:bg-indigo-500/40 px-2 py-0.5 rounded-lg border border-indigo-500/40 transition">
+                            <i class="fa-solid fa-dice text-amber-400"></i>
+                            <span>Acak Karakter</span>
+                        </button>
+                    </div>
+                    <input type="text" id="characterInput" value="A tiny brave wooden toy cat with glowing emerald eyes" 
+                        placeholder="Contoh: A lonely baby dragon wearing a oversized knitted sweater" 
+                        class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition">
+                </div>
+
+                <!-- Story Concept / Brief -->
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                            Garis Besar Cerita (Bisa Bahasa Indonesia)
+                        </label>
+                        <button type="button" onclick="randomizeConcept()" class="text-[11px] text-indigo-300 hover:text-white font-medium flex items-center space-x-1 bg-indigo-500/20 hover:bg-indigo-500/40 px-2 py-0.5 rounded-lg border border-indigo-500/40 transition">
+                            <i class="fa-solid fa-dice text-amber-400"></i>
+                            <span>Acak Cerita</span>
+                        </button>
+                    </div>
+                    <textarea id="conceptInput" rows="3" 
+                        placeholder="Masukkan ringkasan cerita atau biarkan kosong untuk generasi ide otomatis..."
+                        class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition custom-scrollbar">Seekor kucing kayu mainan kecil mengorbankan ukiran badannya sendiri untuk dijadikan kayu bakar demi menghangatkan anak burung yang kedinginan di tengah badai salju. Di scene terakhir terjadi keajaiban Disney.</textarea>
+                </div>
+
+                <!-- Quick Combined Randomize Button -->
+                <button type="button" onclick="randomizeBoth()" class="w-full py-2 px-3 bg-indigo-950/60 hover:bg-indigo-900/80 text-indigo-300 border border-indigo-500/40 rounded-xl text-xs font-semibold flex items-center justify-center space-x-2 transition transform active:scale-98">
+                    <i class="fa-solid fa-shuffle text-amber-400"></i>
+                    <span>🎲 Acak Ide Karakter & Cerita Sekaligus (Surprise Me!)</span>
+                </button>
+
+                <!-- Style Preset -->
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
+                        Style Prompt Preset
+                    </label>
+                    <select id="stylePreset" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-indigo-500">
+                        <option value="modern_pixar">3D Modern Pixar / Disney Digital Art (Rich Detail, Octane Render)</option>
+                        <option value="classic_disney_3d">Classic Magical Disney 3D (Soft Lighting, Whimsical Atmosphere)</option>
+                        <option value="dark_fairytale_3d">Dark Disney Fairytale (Cinematic Mood, Dramatic Lighting)</option>
+                        <option value="vibrant_cute">Vibrant Cute Disney Cartoon (High Saturation, Expressive Eyes)</option>
+                    </select>
+                </div>
+
+                <!-- Optional Gemini API Key Input -->
+                <details class="bg-slate-900/60 rounded-xl border border-slate-800 p-3">
+                    <summary class="text-xs font-semibold text-slate-400 cursor-pointer flex items-center justify-between">
+                        <span><i class="fa-solid fa-key text-amber-400 mr-1.5"></i> Gemini API Key (Opsional)</span>
+                        <i class="fa-solid fa-chevron-down text-slate-500 text-[10px]"></i>
+                    </summary>
+                    <div class="mt-2.5 space-y-1.5">
+                        <input type="password" id="apiKeyInput" placeholder="Masukkan Google Gemini API Key (Opsional)" 
+                            class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
+                        <p class="text-[10px] text-slate-500 leading-tight">
+                            Kosongkan untuk menggunakan mesin generator otomatis offline yang super stabil tanpa API key.
+                        </p>
+                    </div>
+                </details>
+
+                <!-- Generate Storyboard Button -->
+                <button id="generateBtn" onclick="generateStoryboard()" class="w-full py-3.5 px-4 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:via-purple-500 hover:to-pink-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/30 flex items-center justify-center space-x-2 transition transform active:scale-98">
+                    <i class="fa-solid fa-sparkles"></i>
+                    <span>Buat Storyboard Disney (60s)</span>
+                </button>
+            </div>
+
+            <!-- Tip Card for Creator -->
+            <div class="glass-card rounded-2xl p-5 border-l-4 border-amber-400 space-y-2">
+                <h3 class="text-sm font-bold text-amber-300 flex items-center">
+                    <i class="fa-solid fa-lightbulb mr-2"></i> Rahasia High RPM & Konsistensi Karakter Disney
+                </h3>
+                <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+                    <li><strong class="text-slate-100">Character Lock 🔒:</strong> Setiap prompt gambar & video di Scene 1-6 secara otomatis membawa deskriptor visual detail yang sama agar bentuk muka, warna, dan baju karakter tidak berubah-ubah.</li>
+                    <li><strong class="text-slate-100">0-3 Detik Hook:</strong> Harus menunjukkan ekspresi ekstrem atau masalah darurat.</li>
+                    <li><strong class="text-slate-100">High Retention Visual:</strong> Disney 3D lighting dengan pupil mata besar menahan mata penonton lebih lama.</li>
+                    <li><strong class="text-slate-100">Twist di Detik 50:</strong> Berikan emosi puncak di Scene 5 dan kehangatan/pesan di Scene 6.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="lg:col-span-8 space-y-6">
+            
+            <!-- Top Action Header & Overall Story Summary -->
+            <div id="summaryCard" class="glass-card rounded-2xl p-6 hidden space-y-5 border-indigo-500/30">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+                    <div>
+                        <span id="storyBadge" class="text-xs font-bold px-2.5 py-1 rounded-md bg-indigo-500/20 text-indigo-300 border border-indigo-500/40">
+                            Disney Animation Concept
+                        </span>
+                        <h2 id="storyTitle" class="text-2xl font-extrabold text-white mt-1">
+                            Title Generating...
+                        </h2>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="exportJSON()" class="px-3.5 py-2 bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-200 border border-indigo-500/30 rounded-xl text-xs font-medium flex items-center space-x-1.5 transition">
+                            <i class="fa-solid fa-download"></i>
+                            <span>Export JSON</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 1-CLICK QUICK COPY HUB (SINGLE CLICK COPIERS) -->
+                <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center">
+                            <i class="fa-solid fa-bolt text-amber-400 mr-2"></i> Pusat Salin 1x Klik (One-Click Batch Copy Hub)
+                        </h3>
+                        <span class="text-[11px] text-slate-400">Salin semua prompt tanpa terpisah-pisah</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+                        <button onclick="copyMasterAll()" class="w-full py-2.5 px-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-xl text-xs font-bold flex items-center justify-center space-x-2 shadow-lg shadow-indigo-600/20 transition transform active:scale-95">
+                            <i class="fa-solid fa-copy text-sm"></i>
+                            <span>1x Salin SEMUA Paket</span>
+                        </button>
+
+                        <button onclick="copyAllImagePrompts()" class="w-full py-2.5 px-3 bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-indigo-500/30 rounded-xl text-xs font-semibold flex items-center justify-center space-x-2 transition transform active:scale-95">
+                            <i class="fa-solid fa-images text-indigo-400"></i>
+                            <span>Salin Semua Prompt Gambar</span>
+                        </button>
+
+                        <button onclick="copyAllVideoPrompts()" class="w-full py-2.5 px-3 bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-emerald-500/30 rounded-xl text-xs font-semibold flex items-center justify-center space-x-2 transition transform active:scale-95">
+                            <i class="fa-solid fa-video text-emerald-400"></i>
+                            <span>Salin Semua Prompt Video</span>
+                        </button>
+
+                        <button onclick="copyAllVoiceovers()" class="w-full py-2.5 px-3 bg-slate-800 hover:bg-slate-700 text-pink-300 border border-pink-500/30 rounded-xl text-xs font-semibold flex items-center justify-center space-x-2 transition transform active:scale-95">
+                            <i class="fa-solid fa-microphone text-pink-400"></i>
+                            <span>Salin Semua Voiceover</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Master Character Sheet Anchor Box -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-gradient-to-r from-purple-950/60 to-indigo-950/60 p-4 rounded-xl border border-purple-500/40 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-purple-300 uppercase tracking-wider flex items-center">
+                                <i class="fa-solid fa-user-astronaut mr-2 text-pink-400"></i> Master Character Anchor Prompt
+                            </span>
+                            <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center">
+                                <i class="fa-solid fa-lock text-[9px] mr-1"></i> Character Synced
+                            </span>
+                            <button onclick="copyText(document.getElementById('characterAnchorText').innerText, 'Character Anchor Prompt')" class="px-2.5 py-1 bg-purple-600/40 hover:bg-purple-600 text-purple-100 rounded-lg text-xs font-semibold transition flex items-center space-x-1">
+                                <i class="fa-regular fa-copy"></i>
+                                <span>Salin</span>
+                            </button>
+                        </div>
+                        <p id="characterAnchorText" class="text-xs font-mono text-purple-200 bg-slate-950/80 p-2.5 rounded-lg border border-purple-900/60 leading-relaxed select-all">
+                            Generating character consistency anchor...
+                        </p>
+                    </div>
+
+                    <!-- Master Environment Anchor Box -->
+                    <div class="bg-gradient-to-r from-cyan-950/60 to-emerald-950/60 p-4 rounded-xl border border-cyan-500/40 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-cyan-300 uppercase tracking-wider flex items-center">
+                                <i class="fa-solid fa-mountain-sun mr-2 text-emerald-400"></i> Master Environment & Background Anchor
+                            </span>
+                            <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center">
+                                <i class="fa-solid fa-lock text-[9px] mr-1"></i> Environment Synced
+                            </span>
+                            <button onclick="copyText(document.getElementById('environmentAnchorText').innerText, 'Environment Anchor Prompt')" class="px-2.5 py-1 bg-cyan-600/40 hover:bg-cyan-600 text-cyan-100 rounded-lg text-xs font-semibold transition flex items-center space-x-1">
+                                <i class="fa-regular fa-copy"></i>
+                                <span>Salin</span>
+                            </button>
+                        </div>
+                        <p id="environmentAnchorText" class="text-xs font-mono text-cyan-200 bg-slate-950/80 p-2.5 rounded-lg border border-cyan-900/60 leading-relaxed select-all">
+                            Generating environment consistency anchor...
+                        </p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                    <div class="bg-slate-900/60 p-3.5 rounded-xl border border-slate-800">
+                        <span class="text-slate-400 font-semibold block mb-1">🎯 Viral Hook Strategy:</span>
+                        <p id="hookStrategyText" class="text-slate-200 italic">Generating strategy...</p>
+                    </div>
+                    <div class="bg-slate-900/60 p-3.5 rounded-xl border border-slate-800">
+                        <span class="text-slate-400 font-semibold block mb-1">🎵 BGM & Audio Vibe:</span>
+                        <p id="audioVibeText" class="text-slate-200">Emotional Disney Orchestral Sweep with gentle piano</p>
+                    </div>
+                </div>
+
+                <!-- Combined All-in-One Text Box Collapsible -->
+                <details class="bg-slate-900/80 rounded-xl border border-slate-800 p-4 group">
+                    <summary class="text-xs font-bold text-slate-300 cursor-pointer flex items-center justify-between list-none">
+                        <span class="flex items-center">
+                            <i class="fa-solid fa-align-left text-indigo-400 mr-2"></i> Tampilkan / Salin Seluruh Naskah & Prompt dalam 1 Kotak Teks Tungal
+                        </span>
+                        <i class="fa-solid fa-chevron-down text-slate-500 group-open:rotate-180 transition-transform"></i>
+                    </summary>
+                    <div class="mt-3 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[11px] text-slate-400">Anda dapat langsung klik tombol salin atau Ctrl+A pada kotak teks di bawah:</span>
+                            <button onclick="copyText(document.getElementById('allInOneTextarea').value, 'Seluruh Teks Storyboard')" class="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded-md text-xs font-semibold transition flex items-center space-x-1">
+                                <i class="fa-solid fa-copy"></i>
+                                <span>Salin Teks Kotak Ini</span>
+                            </button>
+                        </div>
+                        <textarea id="allInOneTextarea" rows="10" readonly class="w-full bg-slate-950 text-indigo-200 text-xs font-mono p-3 rounded-lg border border-slate-800 focus:outline-none custom-scrollbar select-all leading-relaxed"></textarea>
+                    </div>
+                </details>
+            </div>
+
+            <!-- Loading Spinner State -->
+            <div id="loadingState" class="glass-card rounded-2xl p-12 hidden text-center space-y-4">
+                <div class="inline-block animate-spin text-indigo-500 text-4xl">
+                    <i class="fa-solid fa-circle-notch"></i>
+                </div>
+                <h3 class="text-lg font-bold text-white">Meracik Magic Storyboard Disney...</h3>
+                <p class="text-xs text-slate-400 max-w-md mx-auto">
+                    Gemini AI sedang merancang 6 scene video 10-detik dengan formula retention tinggi, naskah voiceover bahasa Inggris, serta prompt video AI siap pakai.
+                </p>
+            </div>
+
+            <!-- Placeholder Welcome State -->
+            <div id="emptyState" class="glass-card rounded-2xl p-12 text-center space-y-4">
+                <div class="w-16 h-16 rounded-full bg-indigo-500/10 text-indigo-400 flex items-center justify-center mx-auto text-2xl border border-indigo-500/20">
+                    <i class="fa-solid fa-clapperboard"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white">Siap Membuat Video Animasi Disney Viral?</h3>
+                <p class="text-sm text-slate-400 max-w-lg mx-auto">
+                    Pilih formula cerita di panel sebelah kiri, lalu klik <strong>"Buat Storyboard Disney"</strong>. Sistem akan menghasilkan prompt Midjourney/Flux, prompt Sora/Runway Gen-3, dan voiceover bahasa Inggris berdurasi pas 60 detik.
+                </p>
+            </div>
+
+            <!-- Storyboard Scenes Container (6 Cards) -->
+            <div id="scenesContainer" class="space-y-6 hidden">
+                <!-- Scenes generated dynamically by JavaScript -->
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-indigo-600 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center space-x-2 text-sm transform translate-y-20 opacity-0 transition-all duration-300 z-50">
+        <i class="fa-solid fa-check-circle"></i>
+        <span id="toastMsg">Berhasil disalin!</span>
+    </div>
+
+    <script>
+        // Active tone tracking
+        let selectedTone = 'emotional_twist';
+        let currentStoryboardData = null;
+
+        // Random Generators Data Bank (Disney Style)
+        const randomCharacters = [
+            "A tiny brave wooden toy cat with glowing emerald glass eyes and carved oak fur",
+            "A clumsy baby polar bear wearing an oversized knitted red scarf and star-shaped glasses",
+            "A lonely baby dragon wearing a soft fluffy yellow raincoat and holding a lilypad umbrella",
+            "A chubby house mouse wearing a thimble helmet, leaf shield, and tiny leather boots",
+            "An ancient magic clockwork hummingbird with golden brass gears inside a grandfather clock",
+            "A sweet elderly hedgehog baker who wears a flour-dusted apron and tiny chef hat",
+            "A curious young sea otter with a shiny glowing seashell backpack and big expressive eyes",
+            "A shy candle-ghost with a warm flickering flame head and porcelain teacup shoes",
+            "A greedy stray fox with fluffy red fur and expressive mischievous amber eyes",
+            "A loyal golden retriever pup with a magical glowing star-shaped patch on its chest",
+            "A tiny cloud monster baby who accidentally creates rainbow sparkles whenever it sneezes",
+            "A grumpy old owl librarian wearing tiny round spectacles and a blue velvet vest"
+        ];
+
+        const randomConcepts = [
+            "Seekor kucing kayu mainan kecil mengorbankan ukiran badannya sendiri untuk dijadikan kayu bakar demi menghangatkan anak burung yang kedinginan di tengah badai salju. Di scene terakhir terjadi keajaiban Disney.",
+            "Anak beruang kutub kikuk berusaha memanjat tebing es berbahaya untuk mengambil bintang jatuh yang tersangkut demi menyenangkan ibunya yang kesepian.",
+            "Anak naga kecil yang tidak bisa mengeluarkan api diejek teman-temannya, namun gelembung ajaib berwarnanya justru menyelamatkan seluruh desa dari bahaya hutan runtuh.",
+            "Tikus rumah kecil memberanikan diri menghadapi kucing hitam raksasa demi mengembalikan cincin pernikahan nenek pemilik rumah yang sangat mengasihinya.",
+            "Hantu lilin kecil di perpustakaan tua berjuang menjaga nyala apinya agar tak padam saat angin kencang demi menerangi anak yatim yang sedang tertidur lelap.",
+            "Berang-berang laut menemukan kerang ajaib yang bisa memutar balik waktu 5 detik, menggunakannya berturut-turut untuk menyelamatkan sahabatnya dari bahaya.",
+            "Ananjing mainan tua yang terlupakan di sudut gudang berusaha merayap di malam hari untuk menyelimuti pemilik kecilnya yang kedinginan karena jendela terbuka.",
+            "Seekor rubah licik berniat mencuri buah emas milik naga hutan, namun saat mengetahui buah itu bisa menyembuhkan saudaranya, sifatnya berubah total.",
+            "Burung hantu pustakawan tua menemukan buku ajaib yang gambarnya hidup setiap kali ada anak kecil yang membacakan cerita dengan tulus."
+        ];
+
+        function randomizeCharacter() {
+            const randomChar = randomCharacters[Math.floor(Math.random() * randomCharacters.length)];
+            const input = document.getElementById('characterInput');
+            input.value = randomChar;
+            input.classList.add('ring-2', 'ring-indigo-500');
+            setTimeout(() => input.classList.remove('ring-2', 'ring-indigo-500'), 600);
+            showToast("Karakter acak berhasil dipilih! 🎲");
+        }
+
+        function randomizeConcept() {
+            const randomConc = randomConcepts[Math.floor(Math.random() * randomConcepts.length)];
+            const input = document.getElementById('conceptInput');
+            input.value = randomConc;
+            input.classList.add('ring-2', 'ring-indigo-500');
+            setTimeout(() => input.classList.remove('ring-2', 'ring-indigo-500'), 600);
+            showToast("Garis besar cerita acak berhasil dipilih! 🎲");
+        }
+
+        function randomizeBoth() {
+            randomizeCharacter();
+            randomizeConcept();
+        }
+
+        // Tone Selector Toggle
+        document.querySelectorAll('.tone-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tone-btn').forEach(b => {
+                    b.classList.remove('border-indigo-500', 'bg-indigo-600/20', 'text-indigo-200');
+                    b.classList.add('border-slate-700', 'bg-slate-900', 'text-slate-400');
+                    b.querySelector('.fa-check').classList.add('opacity-0');
+                });
+                this.classList.remove('border-slate-700', 'bg-slate-900', 'text-slate-400');
+                this.classList.add('border-indigo-500', 'bg-indigo-600/20', 'text-indigo-200');
+                this.querySelector('.fa-check').classList.remove('opacity-0');
+                selectedTone = this.getAttribute('data-tone');
+            });
+        });
+
+        // Template selector auto fills
+        document.getElementById('nicheSelect').addEventListener('change', function() {
+            const val = this.value;
+            const charInput = document.getElementById('characterInput');
+            const conceptInput = document.getElementById('conceptInput');
+
+            if (val === 'heartwarming_sacrifice') {
+                charInput.value = "A tiny wooden toy cat with glowing emerald eyes";
+                conceptInput.value = "Seekor kucing kayu mainan kecil mengorbankan ukiran badannya sendiri untuk dijadikan kayu bakar demi menghangatkan anak burung yang kedinginan di tengah badai salju. Di scene terakhir terjadi keajaiban Disney.";
+            } else if (val === 'unexpected_hero') {
+                charInput.value = "A chubby house mouse wearing a thimble helmet and leaf shield";
+                conceptInput.value = "Seekor tikus rumah kecil berani menghadapi kucing hitam raksasa untuk menyelamatkan cincin nikah milik nenek pemilik rumah yang sangat baik padanya.";
+            } else if (val === 'secret_world') {
+                charInput.value = "An ancient magic clockwork hummingbird inside a grandfather clock";
+                conceptInput.value = "Di dalam jam dinding tua, ada kota robot kuno mikro yang bekerja memutar roda waktu setiap kali pemilik rumah tertidur pulas.";
+            } else if (val === 'moral_paradox') {
+                charInput.value = "A greedy stray fox in a vibrant enchanted forest";
+                conceptInput.value = "Mencoba mencuri buah emas ajaib dari sarang naga kecil, tetapi ketika ia berhasil menculiknya, buah itu malah menyembuhkan penyakit sahabatnya dan mengubah sifat si rubah.";
+            } else if (val === 'unlikely_friendship') {
+                charInput.value = "A grumpy polar bear cub and a playful fire spirit glowbug";
+                conceptInput.value = "Anak beruang kutub yang selalu kesepian berteman dengan roh api kecil yang menghangatkannya tanpa melelehkan es tempat mereka tinggal.";
+            }
+        });
+
+        /* Helper to guarantee data array integrity regardless of key casing/naming from AI */
+        function normalizeStoryboardData(data) {
+            if (!data) return null;
+            let scenes = data.scenes || data.storyboard || data.Scenes || data.scenesList || null;
+            
+            if (!scenes || !Array.isArray(scenes)) {
+                for (let key in data) {
+                    if (Array.isArray(data[key]) && data[key].length > 0) {
+                        scenes = data[key];
+                        break;
+                    }
+                }
+            }
+            data.scenes = Array.isArray(scenes) ? scenes : [];
+            return data;
+        }
+
+        function generateLocalStoryboard(character, concept, stylePreset, niche, tone) {
+            const charDesc = character || "A tiny brave wooden toy cat with glowing emerald eyes";
+            const storyBrief = concept || "Seekor kucing kayu mainan kecil mengorbankan ukiran badannya sendiri untuk dijadikan kayu bakar demi menghangatkan anak burung kedinginan.";
+            
+            const charAnchor = `Disney Pixar 3D animated character turnaround model sheet: ${charDesc}, expressive big reflective eyes, detailed textures, soft subsurface scattering, stylized proportions, vibrant signature colors, neutral grey studio background, Octane render 8k --ar 9:16`;
+            
+            const envAnchor = `Disney Pixar 3D animated background environment concept art: Cozy rustic fairytale wooden cabin interior surrounded by a harsh blizzard visible outside frosted glass windows, warm crackling stone fireplace, wooden shelves with glowing potion bottles, soft volumetric lighting, cinematic mood, Octane render --ar 9:16`;
+
+            const presetText = stylePreset === 'modern_pixar' ? '3D Modern Pixar style, Octane Render 8k, ray tracing' :
+                              stylePreset === 'dark_fairytale_3d' ? 'Dark Disney Fairytale style, cinematic moody lighting' :
+                              stylePreset === 'vibrant_cute' ? 'Vibrant Cute Disney Cartoon style, high saturation, expressive animation' :
+                              'Classic Magical Disney 3D style, soft whimsical atmosphere';
+
+            return {
+                title: "The Golden Spark: A Magical Disney Story",
+                highRpmCategory: "High-RPM Heartwarming Disney Story",
+                hookStrategy: "Immediate extreme emotion & urgency in 0-3s hook with close-up shot holding global viewer attention.",
+                audioVibe: "Emotional Disney orchestral sweep starting with delicate solo piano and building into triumphant strings and choir",
+                characterAnchorPrompt: charAnchor,
+                environmentAnchorPrompt: envAnchor,
+                scenes: [
+                    {
+                        sceneNumber: 1,
+                        timecode: "00:00 - 00:10",
+                        plotSummary: `Introduction to character in immediate danger/urgency: ${charDesc} notices a freezing baby bird during a fierce blizzard.`,
+                        cameraSpecs: "Extreme close-up shot, 85mm lens, shallow depth of field, dramatic low-angle tilt",
+                        lightingAndColor: "Cold icy blue ambient snow light contrasted with warm orange hearth glow, 3D Pixar subsurface scattering",
+                        voiceoverTone: "[Gentle emotional whisper, immediate hook pacing]",
+                        voiceover: "In the middle of a frozen night, when hope seemed completely lost, a tiny miracle was waiting to happen.",
+                        imagePrompt: `${presetText}, ${charDesc}, inside ${envAnchor}, looking compassionately at a tiny shivering baby bird on a icy windowsill, expressive worried eyes, cinematic composition --ar 9:16 --v 6.0`,
+                        videoPrompt: `Cinematic 24fps motion: ${charDesc} in ${envAnchor}, camera slowly zooms into character's wide glass eyes reflecting flickering firelight, shivering motion, soft snow fluttering against window glass`,
+                        sfx: "[Layer 1: Howling blizzard wind outside; Layer 2: Soft wooden floor creak; Layer 3: Gentle heartbeats]",
+                        retentionHook: "0-3s High retention visual hook: Extreme emotional expression on main character"
+                    },
+                    {
+                        sceneNumber: 2,
+                        timecode: "00:10 - 00:20",
+                        plotSummary: `The situation escalates: The fire in the fireplace begins to fade away, threatening both of them.`,
+                        cameraSpecs: "Medium tracking shot, 50mm lens, slow pan following character movement",
+                        lightingAndColor: "Dimming warm glow, dramatic shadows lengthening across the room",
+                        voiceoverTone: "[Concerned, rising urgency]",
+                        voiceover: "The fireplace was dying. Without warmth, the little bird wouldn't survive the freezing frost.",
+                        imagePrompt: `${presetText}, ${charDesc}, inside ${envAnchor}, watching the dying embers of the stone fireplace, holding the shivering baby bird gently, dramatic shadows, expressive worry --ar 9:16 --v 6.0`,
+                        videoPrompt: `Cinematic 24fps motion: ${charDesc} in ${envAnchor}, fireplace embers glowing dim, character cradles baby bird closer to chest, volumetric smoke rising softly`,
+                        sfx: "[Layer 1: Fading wood fire crackle; Layer 2: Soft bird chirping; Layer 3: Tense low cello notes]",
+                        retentionHook: "Rising tension trigger: Dying light source creates urgent suspense"
+                    },
+                    {
+                        sceneNumber: 3,
+                        timecode: "00:20 - 00:30",
+                        plotSummary: `The selfless decision: The character decides to sacrifice part of its own wooden structure to reignite the fire.`,
+                        cameraSpecs: "High-angle dramatic shot, 35mm lens, smooth cinematic push-in",
+                        lightingAndColor: "Golden rim lighting highlighting character's brave determination",
+                        voiceoverTone: "[Awe-inspired, touched tone]",
+                        voiceover: "True love isn't about what we hold onto... it's about what we are willing to give away.",
+                        imagePrompt: `${presetText}, ${charDesc}, inside ${envAnchor}, courageously placing a small carved wooden piece of itself into the hearth fire, golden sparks glowing, determined hero expression --ar 9:16 --v 6.0`,
+                        videoPrompt: `Cinematic 24fps motion: ${charDesc} in ${envAnchor}, character's hands placing carved wood onto glowing coals, burst of golden warm magical sparks illuminated in slow motion`,
+                        sfx: "[Layer 1: Sudden fire flare-up; Layer 2: Magical Disney chime shimmer; Layer 3: Soaring violin entrance]",
+                        retentionHook: "Moral peak moment: Dramatic selfless sacrifice action"
+                    },
+                    {
+                        sceneNumber: 4,
+                        timecode: "00:30 - 00:40",
+                        plotSummary: `The warmth returns: The fire flares bright with magical golden embers, bringing the baby bird back to life.`,
+                        cameraSpecs: "Wide atmosphere shot transitioning to medium close-up, 50mm lens",
+                        lightingAndColor: "Rich golden volumetric light filling the entire cabin room, vibrant warm pastel colors",
+                        voiceoverTone: "[Warm, hopeful, soothing]",
+                        voiceover: "As the golden flame roared back to life, warmth returned, filling the cold room with magic.",
+                        imagePrompt: `${presetText}, ${charDesc}, inside ${envAnchor}, bright warm golden fire light washing over character and happily chirping baby bird, soft reflections, joyful Disney smile --ar 9:16 --v 6.0`,
+                        videoPrompt: `Cinematic 24fps motion: ${charDesc} in ${envAnchor}, baby bird opens wings happily in warm golden light, character smiles with tears of joy, soft particles swirling`,
+                        sfx: "[Layer 1: Roaring warm fireplace; Layer 2: Cheerful bird chirping; Layer 3: Uplifting orchestral crescendo]",
+                        retentionHook: "Emotional relief trigger: Vibrant color warmth contrast after dark cold scene"
+                    },
+                    {
+                        sceneNumber: 5,
+                        timecode: "00:40 - 00:50",
+                        plotSummary: `The Disney Magic Twist: A magical golden fairy dust appears from the fire and heals the character's wood.`,
+                        cameraSpecs: "Dynamic low-angle orbital camera motion, 35mm lens, 24fps motion blur",
+                        lightingAndColor: "Enchanted golden particle lighting, sparkling reflections, dreamlike atmosphere",
+                        voiceoverTone: "[Wondrous, breathless Disney climax voice]",
+                        voiceover: "And then, magic happened. Because a act of pure kindness never goes unnoticed by the universe.",
+                        imagePrompt: `${presetText}, ${charDesc}, inside ${envAnchor}, surrounded by floating magical golden stardust, wood carving restored into glowing golden magical oak, miraculous Disney transformation --ar 9:16 --v 6.0`,
+                        videoPrompt: `Cinematic 24fps motion: Floating golden magical spiral dust encircling ${charDesc} in ${envAnchor}, magic restoring character's wooden body with glowing golden runes`,
+                        sfx: "[Layer 1: Enchanted Disney harp sweep; Layer 2: Windchime sparkles; Layer 3: Full brass crescendo]",
+                        retentionHook: "50-second Viral Twist: Unexpected magical payoff holding retention till end"
+                    },
+                    {
+                        sceneNumber: 6,
+                        timecode: "00:50 - 01:00",
+                        plotSummary: `Heartwarming resolution: The character and bird cuddle together in the cozy cabin looking out at a peaceful starry night.`,
+                        cameraSpecs: "Cinematic wide slow zoom-out, 24mm lens, soft vignette",
+                        lightingAndColor: "Cozy warm cabin light contrasting with starlit aurora sky outside, peaceful Disney tone",
+                        voiceoverTone: "[Deeply satisfying, warm inspiring closing sentence]",
+                        voiceover: "No act of kindness, no matter how small, is ever wasted. Share this magic with someone today.",
+                        imagePrompt: `${presetText}, ${charDesc}, inside ${envAnchor}, resting happily beside baby bird near glowing fireplace, looking out window at starry aurora sky, cozy fairytale ending --ar 9:16 --v 6.0`,
+                        videoPrompt: `Cinematic 24fps motion: Slow zoom-out from ${charDesc} and baby bird in ${envAnchor}, fire gently flickering, magical stars sparkling through window`,
+                        sfx: "[Layer 1: Gentle crackling fire; Layer 2: Soft orchestral resolve note; Layer 3: Soft wind sigh]",
+                        retentionHook: "Final Call to Action: Inspiring moral message encouraging shares & comments"
+                    }
+                ]
+            };
+        }
+
+        async function generateStoryboard() {
+            const character = document.getElementById('characterInput').value.trim();
+            const concept = document.getElementById('conceptInput').value.trim();
+            const stylePreset = document.getElementById('stylePreset').value;
+            const userApiKey = document.getElementById('apiKeyInput')?.value?.trim() || "";
+
+            if (!character) {
+                showToast("Silakan masukkan deskripsi karakter utama!");
+                return;
+            }
+
+            // UI States
+            document.getElementById('emptyState').classList.add('hidden');
+            document.getElementById('summaryCard').classList.add('hidden');
+            document.getElementById('scenesContainer').classList.add('hidden');
+            document.getElementById('loadingState').classList.remove('hidden');
+
+            const systemPrompt = `You are an elite Disney/Pixar 3D animation director, master prompt engineer, and high-RPM short video creator.
+Generate a 60-second animated story split into exactly 6 scenes (10 seconds per scene).
+Aspect ratio MUST always be 9:16 vertical video format.
+Language for voiceover, prompts, camera specs, and summary MUST be in ENGLISH.
+
+CRITICAL MANDATE 1: ABSOLUTE CHARACTER CONSISTENCY ACROSS ALL SCENES
+1. Establish a highly distinct "Master Character Visual Descriptor" (exact clothing, materials, colors, facial features, eyes, proportions, fur/skin texture, accessories).
+2. "characterAnchorPrompt" MUST contain the complete character turnaround / reference sheet prompt.
+
+CRITICAL MANDATE 2: ABSOLUTE ENVIRONMENT & BACKGROUND CONSISTENCY ACROSS ALL SCENES
+1. Establish a standardized "Master Environment Visual Descriptor" (exact architecture, time of day, weather, lighting warmth, background props, color palette, atmospheric depth).
+2. "environmentAnchorPrompt" MUST contain the full standalone environment scene design prompt.
+3. EVERY SINGLE "imagePrompt" and "videoPrompt" in Scene 1 to Scene 6 MUST COMBINE BOTH:
+   - The EXACT Master Character Visual Descriptor
+   - The EXACT Master Environment Visual Descriptor
+Do NOT change background elements, architectural style, or lighting mood abruptly between scenes. Keep the same world space and atmosphere intact across all 6 panels.
+
+Return structured JSON according to this exact schema:
+{
+  "title": "Short Catchy Disney Title",
+  "highRpmCategory": "Niche category description",
+  "hookStrategy": "Explanation of why this 0-3s hook will hold viral retention",
+  "audioVibe": "Detailed Disney orchestral score description, instruments, key signature",
+  "characterAnchorPrompt": "Master Character Anchor Sheet Prompt: Disney Pixar 3D animated character turnaround model sheet of [Full Character Visual Descriptor], detailed textures, expressive large reflective eyes, neutral background, 8k octane render --ar 9:16",
+  "environmentAnchorPrompt": "Master Environment Anchor Sheet Prompt: Disney Pixar 3D animated background environment concept art of [Full Environment Visual Descriptor], volumetric lighting, octane render, photorealistic Disney animation set design --ar 9:16",
+  "scenes": [
+    {
+      "sceneNumber": 1,
+      "timecode": "00:00 - 00:10",
+      "plotSummary": "Specific action happening in this 10 second window",
+      "cameraSpecs": "Camera shot & lens e.g., 85mm close-up shot, shallow depth of field, low-angle dynamic tilt, 24fps cinema",
+      "lightingAndColor": "Lighting setup e.g., Warm volumetric golden hour sunlight, soft subsurface scattering, vibrant pastel Disney Pixar color palette",
+      "voiceoverTone": "Pacing & Tone instruction e.g., [Soft dramatic tone with emotional pause]",
+      "voiceover": "Engaging English voiceover text calibrated for exactly 10 seconds of natural speech",
+      "imagePrompt": "3D render, Disney Pixar style, [Exact Master Character Visual Descriptor], [Exact Master Environment Visual Descriptor], [Scene-specific pose/action], 8K Octane render, ray tracing, soft shadows, master masterpiece composition --ar 9:16 --v 6.0",
+      "videoPrompt": "Hyper-detailed Sora / Runway Gen-3 / Kling prompt: [Exact Master Character Visual Descriptor] in [Exact Master Environment Visual Descriptor], [Camera motion: e.g. Slow cinematic zoom in], [Character micro-expressions & motion], environmental movement, 24fps photoreal Disney animation physics",
+      "sfx": "Layered sound effect cues e.g., [Layer 1: Howling snow wind; Layer 2: Soft wood creak; Layer 3: Subtle chime]",
+      "retentionHook": "Visual retention element trigger"
+    }
+  ]
+}`;
+
+            const userQuery = `Create an ultra-detailed 6-scene Disney 3D cartoon storyboard (60s total, 10s per scene, 9:16 ratio) with MAXIMUM CHARACTER & BACKGROUND CONSISTENCY.
+Character: ${character}
+Story Brief: ${concept || "Create an unexpected heartwarming magical Disney story."}
+Style Preset: ${stylePreset}
+Tone: ${selectedTone}`;
+
+            const apiKey = userApiKey || (window.GEMINI_API_KEY ? window.GEMINI_API_KEY : "");
+            
+            // If no API key is set, use local generator directly
+            if (!apiKey) {
+                setTimeout(() => {
+                    const localData = generateLocalStoryboard(character, concept, stylePreset, document.getElementById('nicheSelect').value, selectedTone);
+                    currentStoryboardData = localData;
+                    renderStoryboard(localData);
+                    showToast("Storyboard Disney berhasil dibuat! ✨");
+                }, 1000);
+                return;
+            }
+
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                generationConfig: {
+                    responseMimeType: "application/json"
+                }
+            };
+
+            try {
+                let response = await fetchWithRetry(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                let result = await response.json();
+                
+                if (!result.candidates || !result.candidates[0] || !result.candidates[0].content) {
+                    throw new Error("Respon API tidak memiliki kandidat valid.");
+                }
+
+                let jsonText = result.candidates[0].content.parts[0].text;
+                
+                // Extract JSON using regex match
+                const jsonMatch = jsonText.match(/\{[\s\S]*\}/);
+                if (jsonMatch) {
+                    jsonText = jsonMatch[0];
+                }
+                
+                let data = JSON.parse(jsonText);
+                data = normalizeStoryboardData(data);
+
+                if (!data || !Array.isArray(data.scenes) || data.scenes.length === 0) {
+                    throw new Error("Respon AI tidak mengandung daftar scene yang valid.");
+                }
+
+                currentStoryboardData = data;
+                renderStoryboard(data);
+                showToast("Storyboard Disney berhasil dibuat! ✨");
+
+            } catch (error) {
+                console.warn("API Call encountered issue, falling back to smart local generator:", error);
+                const localData = generateLocalStoryboard(character, concept, stylePreset, document.getElementById('nicheSelect').value, selectedTone);
+                currentStoryboardData = localData;
+                renderStoryboard(localData);
+                showToast("Storyboard Disney dibuat dengan generator lokal! ✨");
+            }
+        }
+
+        /* Exponential backoff fetch helper */
+        async function fetchWithRetry(url, options, retries = 2, backoff = 800) {
+            try {
+                const response = await fetch(url, options);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                return response;
+            } catch (err) {
+                if (retries > 0) {
+                    await new Promise(r => setTimeout(r, backoff));
+                    return fetchWithRetry(url, options, retries - 1, backoff * 1.5);
+                }
+                throw err;
+            }
+        }
+
+        function renderStoryboard(data) {
+            document.getElementById('loadingState').classList.add('hidden');
+
+            data = normalizeStoryboardData(data);
+
+            // Set Header Summary
+            document.getElementById('storyTitle').innerText = data.title || "Disney Animated Storyboard";
+            document.getElementById('storyBadge').innerText = data.highRpmCategory || "Disney 3D Viral Short";
+            document.getElementById('hookStrategyText').innerText = data.hookStrategy || "Strong visual hook in first 3s.";
+            document.getElementById('audioVibeText').innerText = data.audioVibe || "Magical Disney Orchestral";
+            document.getElementById('characterAnchorText').innerText = data.characterAnchorPrompt || "Disney Pixar 3D animated character anchor sheet...";
+            document.getElementById('environmentAnchorText').innerText = data.environmentAnchorPrompt || "Disney Pixar 3D animated background environment concept art...";
+            
+            // Populate Combined All-in-One Text Area
+            document.getElementById('allInOneTextarea').value = buildMasterTextPackage(data);
+            
+            document.getElementById('summaryCard').classList.remove('hidden');
+
+            const container = document.getElementById('scenesContainer');
+            container.innerHTML = '';
+
+            if (Array.isArray(data.scenes)) {
+                data.scenes.forEach((scene, index) => {
+                    const sceneEl = document.createElement('div');
+                    sceneEl.className = 'glass-card glass-card-hover rounded-2xl p-6 space-y-4 border-slate-800 relative overflow-hidden';
+                    
+                    sceneEl.innerHTML = `
+                        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
+                            <div class="flex items-center space-x-3">
+                                <span class="w-8 h-8 rounded-xl bg-indigo-600 text-white font-extrabold flex items-center justify-center text-sm shadow-md">
+                                    ${scene.sceneNumber || (index + 1)}
+                                </span>
+                                <div>
+                                    <h3 class="font-bold text-white text-base flex items-center gap-2">
+                                        <span>Scene ${scene.sceneNumber || (index + 1)}</span>
+                                        <span class="text-xs text-indigo-400 font-normal">(${scene.timecode || "00:00 - 00:10"})</span>
+                                        <span class="text-[10px] bg-purple-500/20 text-purple-300 border border-purple-500/30 px-2 py-0.5 rounded-full font-semibold flex items-center">
+                                            <i class="fa-solid fa-lock text-[9px] mr-1 text-purple-400"></i> Character Locked
+                                        </span>
+                                        <span class="text-[10px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 px-2 py-0.5 rounded-full font-semibold flex items-center">
+                                            <i class="fa-solid fa-mountain-sun text-[9px] mr-1 text-cyan-400"></i> Background Synced
+                                        </span>
+                                    </h3>
+                                    <p class="text-xs text-slate-300 font-medium">${scene.plotSummary || ""}</p>
+                                </div>
+                            </div>
+                            <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-800 text-indigo-300 border border-slate-700 flex items-center">
+                                <i class="fa-solid fa-fire text-amber-400 mr-1.5"></i> ${scene.retentionHook || "Retention element"}
+                            </span>
+                        </div>
+
+                        <!-- Technical Specs Badges -->
+                        <div class="flex flex-wrap gap-2 text-xs">
+                            <span class="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-700/80 text-cyan-300 flex items-center">
+                                <i class="fa-solid fa-video mr-1 text-cyan-400"></i> ${scene.cameraSpecs || "85mm Close-up Shot"}
+                            </span>
+                            <span class="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-700/80 text-amber-300 flex items-center">
+                                <i class="fa-solid fa-sun mr-1 text-amber-400"></i> ${scene.lightingAndColor || "Volumetric Disney Lighting"}
+                            </span>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                            <!-- Left Info: Voiceover & Audio -->
+                            <div class="lg:col-span-5 space-y-3">
+                                <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800 space-y-1.5">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-bold text-pink-400 uppercase tracking-wider flex items-center">
+                                            <i class="fa-solid fa-microphone mr-1.5"></i> Voiceover (English 10s)
+                                        </span>
+                                        <button onclick="copyText('${escapeQuotes(scene.voiceover)}', 'Voiceover Scene ${scene.sceneNumber || (index + 1)}')" class="text-slate-400 hover:text-white text-xs">
+                                            <i class="fa-regular fa-copy"></i>
+                                        </button>
+                                    </div>
+                                    <span class="text-[10px] text-pink-300/80 font-mono block">${scene.voiceoverTone || "[Emotional voice tone]"}</span>
+                                    <p class="text-xs text-slate-100 leading-relaxed font-serif italic">"${scene.voiceover || ""}"</p>
+                                </div>
+
+                                <div class="bg-slate-900/50 p-3 rounded-xl border border-slate-800 text-xs">
+                                    <span class="text-slate-400 font-semibold block mb-0.5">🔊 Layered SFX & Foley Cues: </span>
+                                    <span class="text-amber-300 font-mono text-[11px]">${scene.sfx || "Disney orchestral rise"}</span>
+                                </div>
+
+                                <!-- Preview Test Image Area -->
+                                <div class="space-y-2">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-medium text-slate-400">Visual Concept Preview (9:16):</span>
+                                        <button onclick="generatePreviewImage(${scene.sceneNumber || (index + 1)}, '${escapeQuotes(scene.imagePrompt)}')" class="px-2.5 py-1 bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 border border-purple-500/30 rounded-lg text-xs font-medium transition flex items-center space-x-1">
+                                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                            <span>Test Visual</span>
+                                        </button>
+                                    </div>
+                                    <div id="imgPreview-${scene.sceneNumber || (index + 1)}" class="w-full h-48 bg-slate-900 rounded-xl border border-dashed border-slate-700 flex flex-col items-center justify-center text-slate-500 text-xs p-4 text-center overflow-hidden relative">
+                                        <i class="fa-regular fa-image text-2xl mb-1 opacity-50"></i>
+                                        <span>Klik 'Test Visual' untuk membuat pratinjau gambar 9:16 dengan AI</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right Info: Prompts AI -->
+                            <div class="lg:col-span-7 space-y-3">
+                                <!-- Image Prompt Card -->
+                                <div class="bg-slate-900/90 p-3.5 rounded-xl border border-slate-800 space-y-2">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-bold text-indigo-400 uppercase tracking-wider flex items-center">
+                                            <i class="fa-solid fa-image mr-1.5"></i> Detailed Image Prompt (Midjourney / Flux / Imagen)
+                                        </span>
+                                        <button onclick="copyText('${escapeQuotes(scene.imagePrompt)}', 'Image Prompt Scene ${scene.sceneNumber || (index + 1)}')" class="px-2 py-0.5 bg-indigo-600/30 hover:bg-indigo-600 text-indigo-200 rounded text-xs transition flex items-center space-x-1">
+                                            <i class="fa-regular fa-copy"></i>
+                                            <span>Salin</span>
+                                        </button>
+                                    </div>
+                                    <div class="p-2.5 bg-slate-950 rounded-lg text-xs text-indigo-100 font-mono leading-relaxed select-all border border-slate-800/80 max-h-28 overflow-y-auto custom-scrollbar">
+                                        ${scene.imagePrompt || ""}
+                                    </div>
+                                </div>
+
+                                <!-- Video Prompt Card -->
+                                <div class="bg-slate-900/90 p-3.5 rounded-xl border border-slate-800 space-y-2">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center">
+                                            <i class="fa-solid fa-video mr-1.5"></i> Motion Video Prompt (Sora / Runway Gen-3 / Kling)
+                                        </span>
+                                        <button onclick="copyText('${escapeQuotes(scene.videoPrompt)}', 'Video Prompt Scene ${scene.sceneNumber || (index + 1)}')" class="px-2 py-0.5 bg-emerald-600/30 hover:bg-emerald-600 text-emerald-200 rounded text-xs transition flex items-center space-x-1">
+                                            <i class="fa-regular fa-copy"></i>
+                                            <span>Salin</span>
+                                        </button>
+                                    </div>
+                                    <div class="p-2.5 bg-slate-950 rounded-lg text-xs text-emerald-100 font-mono leading-relaxed select-all border border-slate-800/80 max-h-28 overflow-y-auto custom-scrollbar">
+                                        ${scene.videoPrompt || ""}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    container.appendChild(sceneEl);
+                });
+            }
+
+            container.classList.remove('hidden');
+        }
+
+        /* ONE-CLICK BATCH COPY FUNCTIONS */
+        function buildMasterTextPackage(data) {
+            if (!data) return '';
+            data = normalizeStoryboardData(data);
+            
+            let text = `=== DISNEY MAGICBOARD STORYBOARD FULL PACKAGE ===\n\n`;
+            text += `TITLE: ${data.title || ''}\n`;
+            text += `CATEGORY / NICHE: ${data.highRpmCategory || ''}\n`;
+            text += `HOOK STRATEGY: ${data.hookStrategy || ''}\n`;
+            text += `AUDIO VIBE: ${data.audioVibe || ''}\n\n`;
+            text += `/* MASTER CHARACTER ANCHOR PROMPT */\n${data.characterAnchorPrompt || ''}\n\n`;
+            text += `/* MASTER ENVIRONMENT ANCHOR PROMPT */\n${data.environmentAnchorPrompt || ''}\n\n`;
+            text += `=================================================\n\n`;
+
+            if (Array.isArray(data.scenes)) {
+                data.scenes.forEach((s, idx) => {
+                    text += `=== SCENE ${s.sceneNumber || (idx + 1)} (${s.timecode || '00:00 - 00:10'}) ===\n`;
+                    text += `PLOT SUMMARY: ${s.plotSummary || ''}\n`;
+                    text += `CAMERA SPECS: ${s.cameraSpecs || ''}\n`;
+                    text += `LIGHTING: ${s.lightingAndColor || ''}\n`;
+                    text += `VOICEOVER TONE: ${s.voiceoverTone || ''}\n`;
+                    text += `VOICEOVER (10s): "${s.voiceover || ''}"\n`;
+                    text += `IMAGE PROMPT (Midjourney/Flux): ${s.imagePrompt || ''}\n`;
+                    text += `VIDEO PROMPT (Sora/Runway/Kling): ${s.videoPrompt || ''}\n`;
+                    text += `SFX: ${s.sfx || ''}\n`;
+                    text += `RETENTION TRIGGER: ${s.retentionHook || ''}\n\n`;
+                });
+            }
+
+            return text;
+        }
+
+        function copyMasterAll() {
+            if (!currentStoryboardData) return;
+            const fullPackage = buildMasterTextPackage(currentStoryboardData);
+            copyText(fullPackage, "Seluruh Paket Master Storyboard");
+        }
+
+        function copyAllImagePrompts() {
+            if (!currentStoryboardData) return;
+            const data = normalizeStoryboardData(currentStoryboardData);
+            let text = `/* MASTER CHARACTER ANCHOR PROMPT */\n${data.characterAnchorPrompt || ''}\n\n`;
+            text += `/* MASTER ENVIRONMENT ANCHOR PROMPT */\n${data.environmentAnchorPrompt || ''}\n\n`;
+            text += `/* ALL SCENE IMAGE PROMPTS (MIDJOURNEY / FLUX / IMAGEN) */\n\n`;
+            
+            if (Array.isArray(data.scenes)) {
+                data.scenes.forEach((s, idx) => {
+                    text += `// Scene ${s.sceneNumber || (idx + 1)} (${s.timecode || '10s'}):\n${s.imagePrompt || ''}\n\n`;
+                });
+            }
+            copyText(text, "Semua Prompt Gambar (Scene 1-6 + Character & Environment Anchors)");
+        }
+
+        function copyAllVideoPrompts() {
+            if (!currentStoryboardData) return;
+            const data = normalizeStoryboardData(currentStoryboardData);
+            let text = `/* ALL SCENE MOTION VIDEO PROMPTS (SORA / RUNWAY GEN-3 / KLING) */\n\n`;
+            
+            if (Array.isArray(data.scenes)) {
+                data.scenes.forEach((s, idx) => {
+                    text += `// Scene ${s.sceneNumber || (idx + 1)} (${s.timecode || '10s'}):\n${s.videoPrompt || ''}\n\n`;
+                });
+            }
+            copyText(text, "Semua Prompt Video Motion (Scene 1-6)");
+        }
+
+        function copyAllVoiceovers() {
+            if (!currentStoryboardData) return;
+            const data = normalizeStoryboardData(currentStoryboardData);
+            let text = `/* VOICEOVER SCRIPT (ELEVENLABS / AI VOICE) */\n\n`;
+            
+            if (Array.isArray(data.scenes)) {
+                data.scenes.forEach((s, idx) => {
+                    text += `[Scene ${s.sceneNumber || (idx + 1)} - ${s.timecode || '10s'}] ${s.voiceoverTone || ''}\n`;
+                    text += `"${s.voiceover || ''}"\n\n`;
+                });
+            }
+            copyText(text, "Semua Naskah Voiceover (Scene 1-6)");
+        }
+
+        async function generatePreviewImage(sceneNum, promptText) {
+            const imgBox = document.getElementById(`imgPreview-${sceneNum}`);
+            imgBox.innerHTML = `
+                <div class="inline-block animate-spin text-purple-400 text-xl mb-2">
+                    <i class="fa-solid fa-circle-notch"></i>
+                </div>
+                <span class="text-purple-300">Generasi Gambar Disney 9:16...</span>
+            `;
+
+            const userApiKey = document.getElementById('apiKeyInput')?.value?.trim() || "";
+            const apiKey = userApiKey || (window.GEMINI_API_KEY ? window.GEMINI_API_KEY : "");
+
+            if (!apiKey) {
+                // Generate a styled placeholder canvas concept image
+                setTimeout(() => {
+                    renderFallbackConceptImage(sceneNum, promptText);
+                }, 800);
+                return;
+            }
+
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${apiKey}`;
+
+            const payload = {
+                instances: [{ prompt: promptText }],
+                parameters: {
+                    sampleCount: 1,
+                    aspectRatio: "9:16"
+                }
+            };
+
+            try {
+                let response = await fetchWithRetry(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                let result = await response.json();
+                if (result.predictions && result.predictions[0] && result.predictions[0].bytesBase64Encoded) {
+                    const imgUrl = `data:image/png;base64,${result.predictions[0].bytesBase64Encoded}`;
+                    imgBox.innerHTML = `<img src="${imgUrl}" alt="Scene ${sceneNum} Preview" class="w-full h-full object-cover rounded-lg">`;
+                } else {
+                    throw new Error("Invalid image result format");
+                }
+            } catch (err) {
+                console.warn("Imagen API failed, using concept render:", err);
+                renderFallbackConceptImage(sceneNum, promptText);
+            }
+        }
+
+        function renderFallbackConceptImage(sceneNum, promptText) {
+            const imgBox = document.getElementById(`imgPreview-${sceneNum}`);
+            const canvas = document.createElement('canvas');
+            canvas.width = 270;
+            canvas.height = 480;
+            const ctx = canvas.getContext('2d');
+
+            // Disney style vertical gradient background
+            const grad = ctx.createLinearGradient(0, 0, 0, 480);
+            grad.addColorStop(0, '#1e1b4b');
+            grad.addColorStop(0.5, '#4338ca');
+            grad.addColorStop(1, '#ec4899');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, 270, 480);
+
+            // Draw glowing stars / magic sparkles
+            ctx.fillStyle = '#ffffff';
+            for (let i = 0; i < 35; i++) {
+                const x = (i * 37) % 270;
+                const y = (i * 53) % 480;
+                const radius = (i % 3) + 1;
+                ctx.beginPath();
+                ctx.arc(x, y, radius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Draw Disney 9:16 badge box
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.75)';
+            ctx.fillRect(15, 15, 240, 450);
+            ctx.strokeStyle = '#fbbf24';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(15, 15, 240, 450);
+
+            ctx.fillStyle = '#fbbf24';
+            ctx.font = 'bold 16px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(`✨ Disney Scene ${sceneNum}`, 135, 120);
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 12px sans-serif';
+            ctx.fillText("9:16 VERTICAL CONCEPT", 135, 150);
+
+            ctx.fillStyle = '#cbd5e1';
+            ctx.font = '10px sans-serif';
+            const words = promptText.substring(0, 140).split(' ');
+            let line = '';
+            let y = 200;
+            for (let n = 0; n < words.length; n++) {
+                let testLine = line + words[n] + ' ';
+                if (testLine.length > 28) {
+                    ctx.fillText(line, 135, y);
+                    line = words[n] + ' ';
+                    y += 18;
+                } else {
+                    line = testLine;
+                }
+            }
+            ctx.fillText(line, 135, y);
+
+            ctx.fillStyle = '#a855f7';
+            ctx.font = 'italic 11px sans-serif';
+            ctx.fillText("Disney 3D Octane Render", 135, 420);
+
+            const dataUrl = canvas.toDataURL();
+            imgBox.innerHTML = `<img src="${dataUrl}" alt="Scene ${sceneNum} Concept" class="w-full h-full object-cover rounded-lg shadow-inner">`;
+        }
+
+        function copyText(text, label = "Text") {
+            const tempInput = document.createElement('textarea');
+            tempInput.value = text;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            showToast(`${label} berhasil disalin!`);
+        }
+
+        function exportJSON() {
+            if (!currentStoryboardData) return;
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(currentStoryboardData, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `Disney_Storyboard_${Date.now()}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            showToast("Data storyboard berhasil di-download!");
+        }
+
+        function escapeQuotes(str) {
+            if (!str) return '';
+            return str.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
