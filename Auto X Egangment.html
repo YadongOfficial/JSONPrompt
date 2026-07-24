@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto-Viral X-Bot (Thread Auto-Split)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0f172a; /* Slate 900 */
+            color: #f8fafc;
+        }
+        
+        /* Animasi Radar */
+        .radar-box {
+            position: relative;
+            overflow: hidden;
+        }
+        .radar-scanner {
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.4), transparent);
+            animation: scan 2s linear infinite;
+            display: none;
+        }
+        @keyframes scan {
+            0% { left: -100%; }
+            100% { left: 200%; }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #1e293b; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+
+        /* Toast */
+        .toast {
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transform: translateY(150%);
+            opacity: 0;
+        }
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Auto-resize textarea */
+        textarea {
+            resize: none;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center py-10 px-4">
+
+    <!-- Header -->
+    <header class="text-center mb-10 w-full max-w-3xl">
+        <div class="inline-flex items-center justify-center p-3 bg-blue-500/10 text-blue-400 rounded-full mb-4">
+            <i class="fa-brands fa-x-twitter text-3xl"></i>
+        </div>
+        <h1 class="text-3xl md:text-4xl font-extrabold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400">
+            Auto-Viral X-Bot
+        </h1>
+        <p class="text-slate-400">Pencari tren real-time dengan Auto-Thread Generator (Max 180 Karakter).</p>
+    </header>
+
+    <!-- Main Dashboard -->
+    <main class="w-full max-w-3xl bg-slate-800 rounded-3xl shadow-2xl border border-slate-700 overflow-hidden flex flex-col">
+        
+        <!-- Control Panel -->
+        <div class="p-6 md:p-8 border-b border-slate-700 bg-slate-800/50">
+            <div class="flex flex-col md:flex-row gap-4 items-end">
+                <div class="w-full">
+                    <label class="block text-sm font-semibold text-slate-300 mb-2">Pilih Gaya Bahasa Postingan</label>
+                    <div class="relative">
+                        <select id="styleSelect" class="w-full appearance-none bg-slate-900 border border-slate-600 text-white py-3 pl-4 pr-10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                            <option value="Opini Tajam">Opini Tajam (Engagement Tinggi)</option>
+                            <option value="Sarkasme Halus">Sarkasme Halus / Humor (Potensi RT)</option>
+                            <option value="Thread Informasi">Thread Informasi (Edukasi / Cerita)</option>
+                            <option value="Curhat Relatable">Curhatan Relatable (Potensi Likes)</option>
+                            <option value="Pertanyaan Polling">Pertanyaan Interaktif (Potensi Reply)</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"></i>
+                    </div>
+                </div>
+                
+                <button id="autoPilotBtn" onclick="runAutoPilot()" class="w-full md:w-auto flex-shrink-0 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-bold py-3 px-6 rounded-xl transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3 shadow-lg shadow-blue-500/30">
+                    <i class="fa-solid fa-bolt text-yellow-300"></i>
+                    <span>Generate Otomatis</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Proses & Status Area -->
+        <div id="statusArea" class="bg-slate-900 p-4 md:p-6 border-b border-slate-700 hidden">
+            <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">Live Status Proses</h3>
+            
+            <div class="space-y-4">
+                <!-- Step 1 -->
+                <div class="flex items-center gap-3" id="step1">
+                    <div class="w-6 h-6 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold step-icon transition-colors">1</div>
+                    <div class="text-sm text-slate-400 step-text">Menganalisis tren internet & X saat ini...</div>
+                    <i class="fa-solid fa-circle-notch fa-spin text-blue-400 ml-auto hidden loader-icon"></i>
+                </div>
+                <!-- Step 2 -->
+                <div class="flex items-center gap-3 opacity-50" id="step2">
+                    <div class="w-6 h-6 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold step-icon transition-colors">2</div>
+                    <div class="text-sm text-slate-400 step-text">Topik viral ditemukan: <span id="foundTopic" class="text-blue-400 font-semibold hidden"></span></div>
+                    <i class="fa-solid fa-circle-notch fa-spin text-blue-400 ml-auto hidden loader-icon"></i>
+                </div>
+                <!-- Step 3 -->
+                <div class="flex items-center gap-3 opacity-50" id="step3">
+                    <div class="w-6 h-6 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold step-icon transition-colors">3</div>
+                    <div class="text-sm text-slate-400 step-text">AI memformulasikan cuitan (Max 180 Char / Auto-Thread)...</div>
+                    <i class="fa-solid fa-circle-notch fa-spin text-blue-400 ml-auto hidden loader-icon"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hasil Output -->
+        <div class="p-6 md:p-8 flex-grow flex flex-col relative radar-box" id="resultArea">
+            <div class="radar-scanner" id="radarScanner"></div>
+            
+            <!-- Empty State -->
+            <div id="emptyState" class="flex flex-col items-center justify-center py-10 text-slate-500">
+                <div class="w-20 h-20 bg-slate-800 rounded-full flex items-center justify-center mb-4 border border-slate-700">
+                    <i class="fa-solid fa-robot text-3xl opacity-50"></i>
+                </div>
+                <p class="text-center max-w-sm text-sm">Tekan tombol <b>Generate Otomatis</b>. AI akan mencari tren dan menyusun cuitan atau utas (thread) secara otomatis.</p>
+            </div>
+
+            <!-- Result State (Dynamic Container for Threads) -->
+            <div id="tweetResult" class="hidden flex-col h-full z-10 w-full">
+                <!-- Data Source Indicator -->
+                <div class="mb-6 flex items-center justify-end">
+                    <div id="sourceIndicator" class="hidden items-center gap-1 text-[10px] text-emerald-400 bg-emerald-400/10 px-3 py-1.5 rounded-full border border-emerald-400/20 font-bold uppercase tracking-wider">
+                        <i class="fa-solid fa-earth-americas"></i> Menggunakan Data Real-time
+                    </div>
+                </div>
+
+                <!-- Container untuk Tweet(s) -->
+                <div id="tweetsContainer" class="flex flex-col">
+                    <!-- Textareas will be injected here by JS -->
+                </div>
+                
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-8 right-8 bg-slate-800 border border-slate-600 text-white px-5 py-4 rounded-xl shadow-2xl flex items-center gap-3 toast z-50">
+        <div id="toastIcon" class="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+            <i class="fa-solid fa-check"></i>
+        </div>
+        <span id="toastMsg" class="font-medium text-sm">Berhasil disalin!</span>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // API Key Environment Variable
+        const apiKey = "";
+        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+        // Utility: Exponential Backoff Fetch
+        async function fetchWithRetry(url, options, maxRetries = 5) {
+            let delay = 1000;
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
+                    return await response.json();
+                } catch (error) {
+                    if (i === maxRetries - 1) throw error;
+                    await new Promise(res => setTimeout(res, delay));
+                    delay *= 2;
+                }
+            }
+        }
+
+        // Update UI Steps Function
+        function setStepStatus(stepNum, status, textDetail = "") {
+            const stepEl = document.getElementById(`step${stepNum}`);
+            if (!stepEl) return;
+            
+            const icon = stepEl.querySelector('.step-icon');
+            const text = stepEl.querySelector('.step-text');
+            const loader = stepEl.querySelector('.loader-icon');
+
+            stepEl.classList.remove('opacity-50');
+
+            if (status === 'active') {
+                icon.className = 'w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-xs font-bold text-white shadow-[0_0_10px_rgba(59,130,246,0.5)] step-icon transition-colors';
+                text.classList.add('text-white');
+                text.classList.remove('text-slate-400', 'text-red-400');
+                loader.classList.remove('hidden');
+            } else if (status === 'done') {
+                icon.innerHTML = '<i class="fa-solid fa-check"></i>';
+                icon.className = 'w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center text-xs text-white step-icon transition-colors';
+                loader.classList.add('hidden');
+                
+                if (stepNum === 2 && textDetail) {
+                    const foundTopicEl = document.getElementById('foundTopic');
+                    foundTopicEl.innerText = `"${textDetail}"`;
+                    foundTopicEl.classList.remove('hidden');
+                }
+            } else if (status === 'error') {
+                icon.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+                icon.className = 'w-6 h-6 rounded-full bg-red-500 flex items-center justify-center text-xs text-white step-icon transition-colors';
+                loader.classList.add('hidden');
+                text.innerText = textDetail || "Terjadi kesalahan.";
+                text.classList.add('text-red-400');
+                text.classList.remove('text-slate-400', 'text-white');
+            }
+        }
+
+        // Reset UI
+        function resetUI() {
+            document.getElementById('statusArea').classList.remove('hidden');
+            document.getElementById('emptyState').classList.add('hidden');
+            document.getElementById('tweetResult').classList.add('hidden');
+            document.getElementById('radarScanner').style.display = 'block';
+            document.getElementById('foundTopic').classList.add('hidden');
+            document.getElementById('sourceIndicator').classList.add('hidden');
+            document.getElementById('tweetsContainer').innerHTML = ''; // Clear threads
+
+            for(let i=1; i<=3; i++) {
+                const stepEl = document.getElementById(`step${i}`);
+                if(!stepEl) continue;
+                
+                stepEl.classList.add('opacity-50');
+                const icon = stepEl.querySelector('.step-icon');
+                icon.innerHTML = i;
+                icon.className = 'w-6 h-6 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold step-icon transition-colors';
+                
+                const text = stepEl.querySelector('.step-text');
+                text.classList.remove('text-white', 'text-red-400');
+                text.classList.add('text-slate-400');
+                
+                // Reset default text explicitly if needed
+                if(i===1) text.innerText = "Menganalisis tren internet & X saat ini...";
+                if(i===2) text.innerHTML = 'Topik viral ditemukan: <span id="foundTopic" class="text-blue-400 font-semibold hidden"></span>';
+                if(i===3) text.innerText = "AI memformulasikan cuitan (Max 180 Char / Auto-Thread)...";
+                
+                stepEl.querySelector('.loader-icon').classList.add('hidden');
+            }
+        }
+
+        // Main Workflow
+        async function runAutoPilot() {
+            const btn = document.getElementById('autoPilotBtn');
+            const style = document.getElementById('styleSelect').value;
+
+            // Lock UI
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i><span>Memproses...</span>';
+            resetUI();
+
+            try {
+                // --- STEP 1: FETCH TRENDS ---
+                setStepStatus(1, 'active');
+                
+                const trendPayload = {
+                    contents: [{ 
+                        parts: [{ 
+                            text: "Cari tahu berita dan topik yang sedang PALING VIRAL dan paling banyak diperbincangkan di X (Twitter) atau sosial media Indonesia hari ini. Berikan HANYA 1 topik teratas yang paling menarik untuk dijadikan konten. Format respon langsung berupa teks topiknya saja, maksimal 1 kalimat." 
+                        }] 
+                    }],
+                    tools: [{ "google_search": {} }]
+                };
+
+                const trendResponse = await fetchWithRetry(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(trendPayload)
+                });
+
+                let trendingTopic = "";
+                let isGrounded = false;
+
+                if (trendResponse?.candidates?.[0]?.content?.parts?.[0]?.text) {
+                    trendingTopic = trendResponse.candidates[0].content.parts[0].text.replace(/["*]/g, '').trim();
+                    if(trendResponse.candidates[0].groundingMetadata) {
+                        isGrounded = true;
+                    }
+                } else {
+                    throw new Error("Gagal mengambil tren.");
+                }
+
+                setStepStatus(1, 'done');
+
+                // --- STEP 2: TOPIC SELECTION ---
+                setStepStatus(2, 'active');
+                await new Promise(r => setTimeout(r, 600)); 
+                setStepStatus(2, 'done', trendingTopic);
+
+                // --- STEP 3: GENERATE TWEET / THREAD (WITH STRICT LIMITS) ---
+                setStepStatus(3, 'active');
+
+                const systemPrompt = "Anda adalah Social Media Specialist dan Ghostwriter ahli untuk platform X (Twitter) Indonesia.";
+                const userPrompt = `Buatkan konten X (Twitter) tentang topik viral: "${trendingTopic}".
+                
+                INSTRUKSI SANGAT PENTING:
+                1. Gaya penulisan: ${style}. Bahasa Gen-Z/Milenial Indonesia yang natural (kasual, tidak kaku).
+                2. ATURAN PANJANG & FORMAT:
+                   - Usahakan buat menjadi 1 cuitan saja dengan MAKSIMAL 180 karakter.
+                   - JIKA informasi terlalu panjang dan tidak muat dalam 180 karakter, PECAH menjadi sebuah THREAD (Utas).
+                   - Setiap cuitan di dalam Thread tersebut MAKSIMAL 180 karakter.
+                3. PEMISAH CUITAN (PEMISAH THREAD): Jika menghasilkan lebih dari 1 cuitan (Thread), pisahkan antar cuitan HANYA menggunakan teks ini: ===TWEET_SEPARATOR===
+                   (Contoh: Isi tweet 1 ===TWEET_SEPARATOR=== Isi tweet 2 ===TWEET_SEPARATOR=== Isi tweet 3)
+                4. Hook (kalimat pembuka) harus sangat memancing emosi atau rasa penasaran.
+                5. Sertakan maksimal 1-2 hashtag di akhir konten.
+                6. JANGAN berikan teks pengantar, judul, atau catatan apapun. Langsung hasil mentahnya saja.`;
+
+                const tweetPayload = {
+                    contents: [{ parts: [{ text: userPrompt }] }],
+                    systemInstruction: { parts: [{ text: systemPrompt }] }
+                };
+
+                const tweetResponse = await fetchWithRetry(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(tweetPayload)
+                });
+
+                if (tweetResponse?.candidates?.[0]?.content?.parts?.[0]?.text) {
+                    const finalTweetText = tweetResponse.candidates[0].content.parts[0].text.trim();
+                    
+                    setStepStatus(3, 'done');
+                    renderTweets(finalTweetText, isGrounded);
+                } else {
+                    throw new Error("Gagal membuat cuitan.");
+                }
+
+            } catch (error) {
+                console.error("AutoPilot Error:", error);
+                setStepStatus(1, 'error', 'Koneksi ke AI gagal.');
+                setStepStatus(2, 'error', '');
+                setStepStatus(3, 'error', '');
+                showToast("Gagal memproses data. Silakan coba kembali.", "error");
+                document.getElementById('radarScanner').style.display = 'none';
+            } finally {
+                // Unlock UI
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-bolt text-yellow-300"></i><span>Generate Otomatis</span>';
+            }
+        }
+
+        // Parse & Render Tweets (Handles Single or Thread)
+        function renderTweets(text, isGrounded) {
+            document.getElementById('radarScanner').style.display = 'none';
+            document.getElementById('tweetResult').classList.remove('hidden');
+            document.getElementById('tweetResult').classList.add('flex');
+            
+            if (isGrounded) {
+                document.getElementById('sourceIndicator').classList.remove('hidden');
+                document.getElementById('sourceIndicator').classList.add('flex');
+            }
+
+            // Split the raw text by the separator
+            let rawTweets = text.split('===TWEET_SEPARATOR===');
+            
+            // Clean up array
+            let tweets = rawTweets.map(t => {
+                let cleaned = t.trim();
+                // Remove unwanted quotes if AI wrapped the whole thing
+                if (cleaned.startsWith('"') && cleaned.endsWith('"')) {
+                    cleaned = cleaned.substring(1, cleaned.length - 1).trim();
+                }
+                return cleaned;
+            }).filter(t => t.length > 0);
+
+            const container = document.getElementById('tweetsContainer');
+            container.innerHTML = ''; // Clear existings
+
+            // Generate HTML for each tweet in the thread
+            tweets.forEach((tweetText, index) => {
+                const isLast = index === tweets.length - 1;
+                const isThread = tweets.length > 1;
+
+                // Create wrapper
+                const div = document.createElement('div');
+                div.className = "relative pl-14 mb-4";
+                
+                // Avatar (Left side)
+                const avatarHTML = `
+                    <div class="absolute left-0 top-0 w-10 h-10 rounded-full bg-gradient-to-br from-slate-600 to-slate-800 flex items-center justify-center border-2 border-slate-700 shadow-inner z-10">
+                        <i class="fa-solid fa-user text-slate-400 text-sm"></i>
+                    </div>
+                `;
+
+                // Thread Connecting Line
+                let lineHTML = '';
+                if (!isLast) {
+                    lineHTML = `<div class="absolute left-5 top-10 bottom-[-24px] w-0.5 bg-slate-700 z-0"></div>`;
+                }
+
+                // Header (Username)
+                const headerHTML = `
+                    <div class="flex flex-wrap items-center gap-2 mb-1">
+                        <span class="font-bold text-white text-sm">Akun Anda</span>
+                        <span class="text-slate-500 text-sm">@username</span>
+                        ${isThread ? `<span class="text-blue-400 text-xs font-bold bg-blue-500/10 px-2 py-0.5 rounded ml-auto">Part ${index + 1}/${tweets.length}</span>` : ''}
+                    </div>
+                `;
+
+                // Textarea setup
+                const textareaId = `tweet-input-${index}`;
+                const textareaHTML = `
+                    <textarea id="${textareaId}" class="w-full bg-slate-900/50 rounded-xl border border-slate-700 p-3 text-white text-base resize-none outline-none placeholder-slate-600 leading-relaxed focus:border-blue-500 transition-colors" spellcheck="false" rows="3">${tweetText}</textarea>
+                `;
+
+                // Footer (Char Count & Action)
+                const charCountId = `char-count-${index}`;
+                const footerHTML = `
+                    <div class="mt-2 flex items-center justify-between">
+                        <span id="${charCountId}" class="text-xs font-mono font-medium px-2 py-1 rounded bg-slate-900 text-slate-400">0/180</span>
+                        <button onclick="copySpecificTweet('${textareaId}')" class="bg-white/10 hover:bg-white text-slate-300 hover:text-slate-900 px-4 py-1.5 rounded-full text-xs font-bold transition-all flex items-center gap-2 active:scale-95">
+                            <i class="fa-solid fa-copy"></i> Salin ${isThread ? 'Part ' + (index+1) : ''}
+                        </button>
+                    </div>
+                `;
+
+                div.innerHTML = avatarHTML + lineHTML + `
+                    <div class="w-full pt-1">
+                        ${headerHTML}
+                        ${textareaHTML}
+                        ${footerHTML}
+                    </div>
+                `;
+
+                container.appendChild(div);
+
+                // Setup dynamic resize & char counting for this textarea
+                const ta = document.getElementById(textareaId);
+                const countDisplay = document.getElementById(charCountId);
+                
+                const updateCount = () => {
+                    const count = ta.value.length;
+                    countDisplay.innerText = `${count}/180`;
+                    if (count > 180) {
+                        countDisplay.classList.add('text-red-400', 'bg-red-500/10');
+                        countDisplay.classList.remove('text-slate-400', 'bg-slate-900');
+                        ta.classList.add('border-red-500/50');
+                    } else {
+                        countDisplay.classList.remove('text-red-400', 'bg-red-500/10');
+                        countDisplay.classList.add('text-slate-400', 'bg-slate-900');
+                        ta.classList.remove('border-red-500/50');
+                    }
+                    ta.style.height = 'auto';
+                    ta.style.height = (ta.scrollHeight) + 'px';
+                };
+
+                // Initial count & height adjust
+                setTimeout(updateCount, 10);
+                
+                // Add listener
+                ta.addEventListener('input', updateCount);
+            });
+        }
+
+        // Copy Specific Tweet from Thread
+        function copySpecificTweet(textareaId) {
+            const textarea = document.getElementById(textareaId);
+            textarea.select();
+            textarea.setSelectionRange(0, 99999);
+            
+            try {
+                document.execCommand('copy');
+                showToast("Berhasil disalin ke clipboard!", "success");
+            } catch (err) {
+                showToast("Gagal menyalin teks.", "error");
+            }
+            window.getSelection().removeAllRanges();
+        }
+
+        // Custom Toast System
+        let toastTimeout;
+        function showToast(message, type = "success") {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            const toastIcon = document.getElementById('toastIcon');
+
+            toastMsg.innerText = message;
+            
+            if (type === "error") {
+                toastIcon.className = "w-8 h-8 rounded-full bg-red-500/20 text-red-400 flex items-center justify-center";
+                toastIcon.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+                toast.classList.replace('border-slate-600', 'border-red-500/50');
+            } else {
+                toastIcon.className = "w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center";
+                toastIcon.innerHTML = '<i class="fa-solid fa-check"></i>';
+                toast.classList.replace('border-red-500/50', 'border-slate-600');
+            }
+
+            toast.classList.add('show');
+
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
